@@ -26,7 +26,7 @@ TOOLCHAIN = arm-none-eabi-
 CC = $(TOOLCHAIN)gcc
 CXX = $(TOOLCHAIN)g++
 AS = $(TOOLCHAIN)as
-LD = $(TOOLCHAIN)ld
+LD = $(TOOLCHAIN)gcc
 OBJCOPY = $(TOOLCHAIN)objcopy
 AR = $(TOOLCHAIN)ar
 
@@ -35,8 +35,8 @@ CFLAG = -c
 OFLAG = -o
 INCLUDEFLAG = -I
 CPUFLAG = -mcpu=arm926ej-s
-WFLAG = -Wall -Wextra -Werror
-CFLAGS = $(CPUFLAG) $(WFLAG)
+WFLAG = -Wall -Wextra
+CFLAGS = $(CPUFLAG) $(WFLAG) --specs=nano.specs
 
 # Additional C compiler flags to produce debugging symbols
 DEB_FLAG = -g -DDEBUG
@@ -85,9 +85,9 @@ FREERTOS_PORT_OBJS = port.o portISR.o
 STARTUP_OBJ = startup.o
 DRIVERS_OBJS = timer.o interrupt.o uart.o
 
-APP_OBJS = init.o main.o print.o receive.o
+APP_OBJS = init.o main.o print.o receive.o mini-printf.o stf_syscalls_minimal.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
-APP_OBJS += nostdlib.o
+#APP_OBJS += nostdlib.o
 
 
 # All object files specified above are prefixed the intermediate directory
@@ -125,7 +125,7 @@ $(OBJDIR) :
 	mkdir -p $@
 
 $(ELF_IMAGE) : $(OBJS) $(LINKER_SCRIPT)
-	$(LD) -nostdlib -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) $(OFLAG) $@
+	$(LD) -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) $(OFLAG) $@
 
 debug : _debug_flags all
 
@@ -212,10 +212,16 @@ $(OBJDIR)init.o : $(APP_SRC)init.c $(DEP_BSP)
 $(OBJDIR)print.o : $(APP_SRC)print.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $(INC_FLAG_DRIVERS) $< $(OFLAG) $@
 
+$(OBJDIR)mini-printf.o : $(APP_SRC)mini-printf.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $(INC_FLAG_DRIVERS) $< $(OFLAG) $@
+
 $(OBJDIR)receive.o : $(APP_SRC)receive.c $(DEP_BSP)
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $(INC_FLAG_DRIVERS) $< $(OFLAG) $@
 
 $(OBJDIR)nostdlib.o : $(APP_SRC)nostdlib.c
+	$(CC) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)stf_syscalls_minimal.o : $(APP_SRC)stf_syscalls_minimal.c
 	$(CC) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
 
 

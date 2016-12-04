@@ -27,6 +27,7 @@ limitations under the License.
 
 #include <FreeRTOS.h>
 #include <task.h>
+#include <stdio.h>
 
 #include "app_config.h"
 #include "print.h"
@@ -65,13 +66,16 @@ void vTaskFunction( void *pvParameters )
 
     taskName = ( NULL==params || NULL==params->text ? defaultText : params->text );
     delay = ( NULL==params ? defaultDelay : params->delay);
-
+    static int ticks = 0;
+    char numb[50] = "Number\r\n";
     for( ; ; )
     {
         /* Print out the name of this task. */
 
         vPrintMsg(taskName);
-
+        ticks++;
+        mini_snprintf(numb, 50, "%d\r\n", ticks);
+        vPrintMsg(numb);
         vTaskDelay( delay / portTICK_RATE_MS );
     }
 

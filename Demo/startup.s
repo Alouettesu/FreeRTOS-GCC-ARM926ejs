@@ -154,7 +154,7 @@ bss_clear_loop:
     ORR r1, r1, #MODE_SVC
     MSR cpsr, r1
 
-    BL _init                               @ before the application is started, initialize all hardware
+    BL __init                               @ before the application is started, initialize all hardware
 
     B main                                 @ and finally start the application
 
@@ -164,8 +164,8 @@ unhandled:
 @ Addresses of BSS begin and end.
 @ Note that both symbols have been defined in the linker script
 __bss_begin_addr:
-    .word __bss_begin
+    .word __bss_start__
 __bss_end_addr:
-    .word __bss_end
+    .word __bss_end__
 
 .end
