@@ -52,3 +52,5 @@ under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0).
 
 For the avoidance of any doubt refer to the comment included at the top of each source and
 header file for license and copyright information.
+
+##Эта fork-версия создана в качестве лабораторной работы по дисциплине "Вычислительные машины".
